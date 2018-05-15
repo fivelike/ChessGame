@@ -8,7 +8,7 @@
 #include "Player.h"
 
 extern Player gameplayer[100];
-
+extern int time_line;
 
 // DoubleCenter 对话框
 
@@ -31,6 +31,7 @@ void DoubleCenter::DoDataExchange(CDataExchange* pDX)
 	//当确认对话框的数据发生改变时，分别将Cstring editor12的内容显示到IDC_TEXTBOX12中
 	DDX_Text(pDX, IDC_EDIT1, editor1);
 	DDX_Text(pDX, IDC_EDIT2, editor2);
+	DDX_Text(pDX, IDC_EDIT3, time);
 }
 
 
@@ -49,11 +50,18 @@ void DoubleCenter::OnOK()
 	// TODO: 在此添加专用代码和/或调用基类
 	char ch1[20];
 	char ch2[20];
+	CString str;
+
 	GetDlgItem(IDC_EDIT1)->GetWindowText(ch1, 20);
 	GetDlgItem(IDC_EDIT2)->GetWindowText(ch2, 20);
+	GetDlgItem(IDC_EDIT3)->GetWindowText(str);
 
 	gameplayer[0].name.Format("%s", ch1);
 	gameplayer[1].name.Format("%s", ch2);
+	if (_ttoi(str) >0)
+	{
+		time_line = _ttoi(str);
+	}
 	CDialogEx::OnOK();
 }
 

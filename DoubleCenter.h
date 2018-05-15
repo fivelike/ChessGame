@@ -13,6 +13,7 @@ public:
 
 	CString editor1;
 	CString editor2;
+	CString time;
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME

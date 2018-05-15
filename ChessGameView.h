@@ -4,7 +4,6 @@
 
 #pragma once
 
-
 class CChessGameView : public CView
 {
 protected: // 仅从序列化创建
@@ -24,6 +23,8 @@ public:
 	CBitmap m_blackchess;
 	CBitmap m_whitechess;
 	CFile mFile;
+
+	int temp_time;
 
 
 
@@ -57,6 +58,10 @@ public:
 	void ReadScore();
 	afx_msg void OnClickDouble();
 	afx_msg void OnClickHero();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void On32773();
+	afx_msg void On32774();
+	afx_msg void On32775();
 };
 
 #ifndef _DEBUG  // ChessGameView.cpp 中的调试版本

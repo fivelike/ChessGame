@@ -16,6 +16,9 @@
 #include "Hero.h"
 #include "Managers.h"
 #include "Player.h"
+#include "Rule.h"
+#include "Operation.h"
+#include "Author.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -24,6 +27,7 @@
 extern Managers manager;
 extern Player gameplayer[100];
 extern Player buffer[3];
+extern int time_line;
 // CChessGameView
 
 IMPLEMENT_DYNCREATE(CChessGameView, CView)
@@ -33,6 +37,10 @@ BEGIN_MESSAGE_MAP(CChessGameView, CView)
 	ON_WM_MOUSEMOVE()
 	ON_COMMAND(ID_32771, &CChessGameView::OnClickDouble)
 	ON_COMMAND(32776, &CChessGameView::OnClickHero)
+	ON_WM_TIMER()
+	ON_COMMAND(ID_32773, &CChessGameView::On32773)
+	ON_COMMAND(ID_32774, &CChessGameView::On32774)
+	ON_COMMAND(ID_32775, &CChessGameView::On32775)
 END_MESSAGE_MAP()
 
 // CChessGameView 构造/析构
@@ -201,6 +209,13 @@ void CChessGameView::PrintAll(CDC* pDC)
 			}
 		}
 	}
+
+	//如果游戏正在进行设置计时器
+	if ((manager.Game_state == 1 || manager.Game_state == 2)&&time_line!=-1 )
+	{
+		SetTimer(1, 1000, NULL);
+		temp_time = time_line;
+	}
 }
 
 
@@ -214,7 +229,7 @@ void CChessGameView::PrintState(CDC* pDC)
 	else if (manager.Game_state == 2) {
 		st.Format("白子走棋");
 	}
-	//3黑子胜利，4白子胜利
+	//4黑子胜利，3白子胜利
 	else if (manager.Game_state == 3) {
 		st = "黑子："+gameplayer[manager.Game_state - 3].name + "胜利";
 	}
@@ -339,6 +354,7 @@ void CChessGameView::OnClickDouble()
 		DoubleCenter enter;
 		enter.editor1.Format("%s", gameplayer[0].name);
 		enter.editor2.Format("%s", gameplayer[1].name);
+		enter.time.Format("%d", time_line);
 		enter.DoModal();
 		manager.GameStart();
 		CDC *pDC = GetDC();
@@ -363,4 +379,56 @@ void CChessGameView::OnClickHero()
 		hero.m_strNum[i].Format("%d", buffer[i].num);
 	}
 	hero.DoModal();
+}
+
+
+void CChessGameView::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	CDC *pDC = GetDC();
+	CString st;
+	
+	st.Format("倒计时：%d 秒", temp_time--);
+	pDC->TextOut(270, 550, st);
+	if (manager.Game_state > 2) {
+		KillTimer(1);
+	}
+	if (temp_time == -1) {
+		KillTimer(1);
+		if (manager.Game_state == 1)//黑子超时，白子胜
+			manager.Game_state = 4;
+		else if (manager.Game_state == 2)
+			manager.Game_state = 3;
+
+		if (manager.Game_state > 2)
+		{
+			PrintState(pDC);
+			GamePlayer();
+		}
+	}
+	CView::OnTimer(nIDEvent);
+}
+
+
+void CChessGameView::On32773()
+{
+	// TODO: 在此添加命令处理程序代码
+	Rule rule;
+	rule.DoModal();
+}
+
+
+void CChessGameView::On32774()
+{
+	// TODO: 在此添加命令处理程序代码
+	Operation operation;
+	operation.DoModal();
+}
+
+
+void CChessGameView::On32775()
+{
+	// TODO: 在此添加命令处理程序代码
+	Author author;
+	author.DoModal();
 }
