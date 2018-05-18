@@ -192,6 +192,7 @@
     <ClInclude Include="ChessGameDoc.h" />
     <ClInclude Include="ChessGameView.h" />
     <ClInclude Include="DoubleCenter.h" />
+    <ClInclude Include="EntryDlg.h" />
     <ClInclude Include="Hero.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="Managers.h" />
@@ -209,6 +210,7 @@
     <ClCompile Include="ChessGameDoc.cpp" />
     <ClCompile Include="ChessGameView.cpp" />
     <ClCompile Include="DoubleCenter.cpp" />
+    <ClCompile Include="EntryDlg.cpp" />
     <ClCompile Include="Hero.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="Managers.cpp" />

@@ -41,5 +41,7 @@ private:
 	bool canMove(int x1, int y1, int x2, int y2);
 	bool Update();
 	bool EatChess();
+public:
+	void nearChess(int &x1, int &x2, int &x3, int &x4);
 };
 

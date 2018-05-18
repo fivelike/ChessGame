@@ -104,41 +104,10 @@ bool Managers::canMove(int x1, int y1, int x2, int y2) {
 
 bool Managers::EatChess() {
 	int x, y;
-	int k = 0;//记录连子数
-	//检测纵向
 	for (x = 0;x < 4;x++) {
-		//有且仅有三子相连
-		if ((map[x][3] < 0)&&(map[x][0]>=0)&& (map[x][1] >= 0)&& (map[x][2] >= 0)) {
-			//110x
-			if (map[x][0] == map[x][1] && map[x][1] != map[x][2]) map[x][2] = -1;
-			//011x
-			if (map[x][1] == map[x][2] && map[x][1] != map[x][0]) map[x][0] = -1;
-		}
-		if ((map[x][0] < 0) && (map[x][1] >= 0) && (map[x][2] >= 0) && (map[x][3] >= 0)) {
-			//x110
-			if (map[x][1] == map[x][2] && map[x][2] != map[x][3]) map[x][3] = -1;
-			//x011
-			if (map[x][2] == map[x][3] && map[x][1] != map[x][2]) map[x][1] = -1;
-		}
+		nearChess(map[x][0], map[x][1], map[x][2], map[x][3]);
+		nearChess(map[0][x], map[1][x], map[2][x], map[3][x]);
 	}
-	//检测横向向
-	for (y = 0;y < 4;y++) {
-		//有且仅有三子相连
-		if ((map[3][y] < 0) && (map[0][y] >= 0) && (map[1][y] >= 0) && (map[2][y] >= 0)) {
-			//110x
-			if (map[0][y] == map[1][y] && map[1][y] != map[2][y]) map[2][y] = -1;
-			//011x
-			if (map[1][y] == map[2][y] && map[1][y] != map[0][y]) map[0][y] = -1;
-		}
-		if ((map[0][y] < 0) && (map[1][y] >= 0) && (map[2][y] >= 0) && (map[3][y] >= 0)) {
-			//x110
-			if (map[1][y] == map[2][y] && map[2][y] != map[3][y]) map[3][y] = -1;
-			//x011
-			if (map[2][y] == map[3][y] && map[1][y] != map[2][y]) map[1][y] = -1;
-		}
-	}
-
-
 	return true;
 }
 
@@ -173,5 +142,17 @@ int Managers::CheckState() {
 	if (wnum < 2) return 1;
 	return 0;
 }
+
+
+void Managers::nearChess(int &x1, int &x2, int &x3, int &x4)
+{
+	int other = Game_state == 1 ? Game_state : Game_state - 2;
+	int cur = Game_state - 1;
+	if (x1 == other&&x2 == cur&&x3 == cur&&x4 == -1) x1 = -1;
+	if (x1 == -1 && x2 == other&&x3 == cur&&x4 == cur) x2 = -1;
+	if (x1 == cur && x2 == cur&&x3 == other&&x4 == -1) x3 = -1;
+	if (x1 == -1 && x2 == cur&&x3 == cur&&x4 == other) x4 = -1;
+}
+
 
 Managers manager;

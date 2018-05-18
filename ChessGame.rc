@@ -86,13 +86,18 @@ BEGIN
         MENUITEM "人机模式",                        ID_32772
     END
     MENUITEM "排行榜",                         ID_32776
-    MENUITEM "棋谱",                          0
+    MENUITEM "棋谱",                          ID_32777
     POPUP "帮助(&H)"
     BEGIN
         MENUITEM "游戏规则",                        ID_32773
         MENUITEM "操作方法",                        ID_32774
         MENUITEM "作者信息",                        ID_32775
         MENUITEM "关于 ChessGame(&A)...",         ID_APP_ABOUT
+    END
+    POPUP "浏览棋谱操作"
+    BEGIN
+        MENUITEM "上一步",                         ID_32778
+        MENUITEM "下一步",                         ID_32779
     END
 END
 
@@ -201,6 +206,19 @@ BEGIN
     CTEXT           "你猜",IDC_STATIC,7,42,221,22
 END
 
+IDD_DIALOG4 DIALOGEX 0, 0, 309, 176
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "棋谱"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "载入棋谱",IDOK,198,155,50,14
+    PUSHBUTTON      "取消",IDCANCEL,252,155,50,14
+    LTEXT           "文件：",IDC_STATIC,20,24,25,8
+    EDITTEXT        IDC_EDIT1,48,22,187,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "浏览",IDC_BUTTON1,241,21,50,14
+    EDITTEXT        IDC_EDIT2,19,40,273,107,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY,WS_EX_LEFTSCROLLBAR
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -296,6 +314,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 108
     END
+
+    IDD_DIALOG4, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 302
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 169
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -338,6 +364,11 @@ BEGIN
 END
 
 IDD_DIALOG3 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG4 AFX_DIALOG_LAYOUT
 BEGIN
     0
 END

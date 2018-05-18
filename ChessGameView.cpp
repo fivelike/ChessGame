@@ -11,7 +11,6 @@
 
 #include "ChessGameDoc.h"
 #include "ChessGameView.h"
-
 #include "DoubleCenter.h"
 #include "Hero.h"
 #include "Managers.h"
@@ -19,7 +18,9 @@
 #include "Rule.h"
 #include "Operation.h"
 #include "Author.h"
-
+#include "EntryDlg.h"
+#include<time.h>
+using namespace std;
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -28,6 +29,7 @@ extern Managers manager;
 extern Player gameplayer[100];
 extern Player buffer[3];
 extern int time_line;
+extern CString cur_entry;
 // CChessGameView
 
 IMPLEMENT_DYNCREATE(CChessGameView, CView)
@@ -41,6 +43,10 @@ BEGIN_MESSAGE_MAP(CChessGameView, CView)
 	ON_COMMAND(ID_32773, &CChessGameView::On32773)
 	ON_COMMAND(ID_32774, &CChessGameView::On32774)
 	ON_COMMAND(ID_32775, &CChessGameView::On32775)
+	ON_COMMAND(ID_32777, &CChessGameView::On32777)
+
+	ON_COMMAND(ID_32778, &CChessGameView::On32778)
+	ON_COMMAND(ID_32779, &CChessGameView::On32779)
 END_MESSAGE_MAP()
 
 // CChessGameView 构造/析构
@@ -140,7 +146,8 @@ void CChessGameView::OnLButtonDown(UINT nFlags, CPoint point)
 		if (manager.DoMsg(mx, my, 1)) {
 			//PrintPart(mx, my, 0, pDC);
 			PrintAll(pDC);
-
+			//记录棋手此步步骤；
+			WriteEntry();
 			if (manager.Game_state > 2)
 				GamePlayer();
 		}
@@ -216,6 +223,9 @@ void CChessGameView::PrintAll(CDC* pDC)
 		SetTimer(1, 1000, NULL);
 		temp_time = time_line;
 	}
+
+
+
 }
 
 
@@ -342,13 +352,14 @@ void CChessGameView::ReadScore() {
 		mFile1.Close();
 	}
 }
+
 void CChessGameView::OnClickDouble()
 {
 	// TODO: 在此添加命令处理程序代码
 	//游戏开始，如果当前仍在游戏中，弹出对话框确定是否要重新开始，并由k取得用户点击情况
 	int k=10;
 	if(manager.Game_state==1||manager.Game_state==2)
-		k = MessageBox("您的游戏未结束，是否重新开始？", "五子棋", MB_OKCANCEL);
+		k = MessageBox("您的游戏未结束，是否重新开始？", "game", MB_OKCANCEL);
 		//当k值不为IDCANCEL，弹出登陆对话框
 	if (k != IDCANCEL) {
 		DoubleCenter enter;
@@ -357,9 +368,13 @@ void CChessGameView::OnClickDouble()
 		enter.time.Format("%d", time_line);
 		enter.DoModal();
 		manager.GameStart();
+		cur_entry = "";
 		CDC *pDC = GetDC();
 		PrintAll(pDC);
 		pDC->DeleteDC();
+
+		//为本局棋谱按时间命名，以避免文件名重复
+		GetEntryName();
 	}
 
 
@@ -431,4 +446,150 @@ void CChessGameView::On32775()
 	// TODO: 在此添加命令处理程序代码
 	Author author;
 	author.DoModal();
+}
+
+
+void CChessGameView::On32777()
+{
+	// TODO: 在此添加命令处理程序代码
+	EntryDlg entrydlg;
+	//entrydlg.DoModal();
+	if (entrydlg.DoModal()==IDOK)
+	{
+		ReadEntry();
+	}
+}
+
+
+void CChessGameView::WriteEntry()
+{
+	CStdioFile file;
+	file.Open(".\\entry-" + entryName + ".txt", CFile::modeCreate | CFile::modeNoTruncate | CFile::modeWrite);
+		CString str;
+		for (int x = 0;x < 4;x++)
+		{
+			for (int y = 0;y < 4;y++) {
+				if (manager.map[x][y] == -1) {
+					str = "3";
+				}
+				else {
+					str.Format("%d", manager.map[x][y]);
+				}
+				file.SeekToEnd();
+				file.Write(str, str.GetLength());
+			}
+		}
+		file.Close();
+	
+}
+
+
+void CChessGameView::GetEntryName()
+{
+	CTime current_time = CTime::GetCurrentTime();
+	entryName = current_time.Format("%Y%m%d%H%M%S");
+}
+
+
+void CChessGameView::ReadEntry()
+{
+	CStdioFile file;
+	file.Open( cur_entry , CFile::modeRead );
+	CString s;
+
+	while (file.ReadString(s))
+	{
+		temp_entry += s;
+	}
+}
+
+
+
+
+void CChessGameView::Next()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	CDC *pDC = GetDC();
+	int k = 0;
+	if ((index + 1) >= temp_entry.GetLength() / 16) {
+		MessageBox("没有下一步了", "game");
+		return;
+	}
+	index++;
+	for (int x = 0; x < 4; x++)
+	{
+		for (int y = 0;y < 4;y++) {
+			if (temp_entry.GetAt(index * 16 + k) == '0') {
+				manager.map[x][y] = 0;
+			}
+			else if (temp_entry.GetAt(index * 16 + k) == '1')
+			{
+				manager.map[x][y] = 1;
+			}
+			else  if (temp_entry.GetAt(index * 16 + k) == '3')
+			{
+				manager.map[x][y] = -1;
+			}
+			k++;
+		}
+	}
+	PrintAll(pDC);
+}
+
+
+void CChessGameView::Pre()
+{
+
+	// TODO: 在此添加控件通知处理程序代码
+	CDC *pDC = GetDC();
+	int k = 0;
+	if ((index + 1) ==0 || index==0) {
+		MessageBox("没有上一步了", "game");
+		return;
+	}
+	index--;
+	for (int x = 0; x < 4; x++)
+	{
+		for (int y = 0;y < 4;y++) {
+			if (temp_entry.GetAt(index * 16 + k) == '0') {
+				manager.map[x][y] = 0;
+			}
+			else if (temp_entry.GetAt(index * 16 + k) == '1')
+			{
+				manager.map[x][y] = 1;
+			}
+			else  if (temp_entry.GetAt(index * 16 + k) == '3')
+			{
+				manager.map[x][y] = -1;
+			}
+			k++;
+		}
+	}
+
+	PrintAll(pDC);
+}
+
+//浏览棋谱操作，上一步
+void CChessGameView::On32778()
+{
+	// TODO: 在此添加命令处理程序代码
+	if (cur_entry != "") {
+			Pre();
+	}
+	else
+		MessageBox("此按钮仅在载入棋谱后可使用！", "game");
+}
+
+//下一步
+void CChessGameView::On32779()
+{
+	// TODO: 在此添加命令处理程序代码
+	if (cur_entry != "") {
+		Next();
+	}
+	else
+	{
+		MessageBox("此按钮仅在载入棋谱后可使用！", "game");
+
+	}
 }

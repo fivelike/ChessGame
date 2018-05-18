@@ -63,6 +63,12 @@
     <ClInclude Include="Author.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="EntryDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="NextPre.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChessGame.cpp">
@@ -102,6 +108,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Author.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="EntryDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="NextPre.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

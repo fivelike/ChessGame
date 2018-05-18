@@ -23,8 +23,11 @@ public:
 	CBitmap m_blackchess;
 	CBitmap m_whitechess;
 	CFile mFile;
-
+	CString entryName;
+	CString temp_entry;
+	CButton next_button,pre_button;
 	int temp_time;
+	int index=-1;
 
 
 
@@ -62,6 +65,14 @@ public:
 	afx_msg void On32773();
 	afx_msg void On32774();
 	afx_msg void On32775();
+	afx_msg void On32777();
+	void WriteEntry();
+	void GetEntryName();
+	void ReadEntry();
+	void Next();
+	void Pre();
+	afx_msg void On32778();
+	afx_msg void On32779();
 };
 
 #ifndef _DEBUG  // ChessGameView.cpp 中的调试版本
